@@ -12,6 +12,7 @@ public class MainGameManager : MonoBehaviour
     [SerializeField] int minScore = 100;
     [SerializeField] Text displayScore;
     [SerializeField] Text displayMinimumScore;
+    Vector3 baseScale;
 
     [SerializeField] GameObject floatingText;
     [SerializeField] Transform spawnText;
@@ -33,6 +34,7 @@ public class MainGameManager : MonoBehaviour
         EventManager.Instance.onAddScore.AddListener(AddScore);
         EventManager.Instance.onNewGame.AddListener(Launch);
         EventManager.Instance.onEndGame.AddListener(Ending);
+        baseScale = displayScore.transform.localScale;
     }
 
     void Launch()
@@ -49,19 +51,21 @@ public class MainGameManager : MonoBehaviour
             return;
 
         GameObject newText = Instantiate(floatingText, transform);
+        Vector3 baseNewScale = newText.transform.localScale;
         newText.transform.position = spawnText.transform.position;
         newText.transform.localScale = Vector3.one * 0.01f;
-        float tweenDuration = 2;
 
-        newText.transform.DOScale(Vector3.one * 2f, tweenDuration);
+        float tweenDuration = 2;
+        newText.transform.DOScale(baseNewScale * 2f, tweenDuration);
         Text _text = newText.GetComponentInChildren<Text>();
         _text.text = "+" + amount;
         _text.DOFade(0, tweenDuration + 1);
         Destroy(newText, tweenDuration);
 
         globalScore += (int)amount;
+        displayScore.transform.DOKill(true);
         displayScore.text = globalScore.ToString();
-        displayScore.transform.DOPunchScale(Vector3.one * 0.5f, 1f, 5, 0.4f);
+        displayScore.transform.DOPunchScale(baseScale * 0.5f, 1f, 5, 0.4f);
 
         if (globalScore > minScore)
             displayScore.color = Color.green;
@@ -95,6 +99,11 @@ public class MainGameManager : MonoBehaviour
             SceneManager.LoadScene(index);
     }
 
+    public void Restart()
+    {
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+    }
+
     void ManageTimer()
     {
         displayTimer.text = currentTimer.ToString();
@@ -105,9 +114,10 @@ public class MainGameManager : MonoBehaviour
         if (realTimer > 1 && currentTimer > 0)
         {
             currentTimer--;
+            Vector3 baseScale = displayTimer.transform.localScale;
             float tweenDuration = 0.4f;
-            displayTimer.transform.DOScale(Vector3.one * 1.2f, tweenDuration);
-            displayTimer.transform.DOScale(Vector3.one, tweenDuration / 2).SetDelay(tweenDuration / 2);
+            displayTimer.transform.DOScale(baseScale * 1.2f, tweenDuration);
+            displayTimer.transform.DOScale(baseScale, tweenDuration / 2).SetDelay(tweenDuration / 2);
             realTimer = 0;
         }
 

@@ -7,27 +7,22 @@ public class Generator : MonoBehaviour
 {
     Selections selections => FindObjectOfType<Selections>();
 
-    [SerializeField] float timer = 4;
     [SerializeField] Vector2 dimensions = new Vector2(5, 5);
     [SerializeField] Vector2 offsetRandomRange = new Vector2(-1, 1);
     [SerializeField] GameObject petPrefab, snakePrefab;
     int index;
     System.Random rdm = new System.Random();
+    GameObject newPet;
 
     private void OnDrawGizmos()
     {
         Gizmos.color = Color.red;
         Gizmos.DrawWireCube(transform.position + new Vector3(dimensions.x/2, dimensions.y/2), dimensions);
     }
-
-    private void Awake()
-    {
-        Invoke(nameof(NewGame), timer);
-    }
-
     private void Start()
     {
         EventManager.Instance.onNewPet.AddListener(CreatePet);
+        EventManager.Instance.onNewGame.AddListener(NewGame);
     }
 
     public float RandomFloat(float min, float max)
@@ -49,9 +44,7 @@ public class Generator : MonoBehaviour
 
     void NewPet(Vector3 spawnPos)
     {
-        GameObject newPet;
         int probability = rdm.Next(0, 100);
-        print(probability);
         if (probability < 2)
             newPet = Instantiate(snakePrefab, spawnPos, Quaternion.identity);
         else
@@ -71,7 +64,5 @@ public class Generator : MonoBehaviour
                 NewPet(randomPos);
             }
         }
-
-        EventManager.Instance.onNewGame.Invoke();
     }
 }

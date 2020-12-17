@@ -131,7 +131,7 @@ MonoBehaviour:
   destroyDuration: 0.5
   explosionFx: {fileID: 3518988527923401563, guid: e0ecc2f325b4cde4880179968c5515c0,
     type: 3}
-  effectRadius: 3
+  effectRadius: 1.5
   petLayer:
     serializedVersion: 2
     m_Bits: 256

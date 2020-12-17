@@ -13,7 +13,7 @@ public class Selections : MonoBehaviour
 
     [Header("Pets")]
     public RegularPet myPetReference;
-    public List<RegularPet> selectedPets = new List<RegularPet>();
+    public List<Pet> selectedPets = new List<Pet>();
     [HideInInspector] public List<Pet> allPets;
 
     void SelectPets()
@@ -59,6 +59,7 @@ public class Selections : MonoBehaviour
             {
                 RaycastHit2D hit = Physics2D.Linecast(selectedPets[i].transform.position, selectedPets[i - 1].transform.position, petLayer);
                 correct = hit.transform == selectedPets[i - 1].transform;
+
                 if (!correct)
                     break;
             }
@@ -66,21 +67,29 @@ public class Selections : MonoBehaviour
             Physics2D.queriesStartInColliders = true;
             if (correct)
             {
-                int score = 0;
+                SendScore(selectedPets);
                 float delay = 0;
                 foreach (var pet in selectedPets)
                 {
-                    score += pet.scoreValue + (pet.scoreValue * pet.petId);
                     pet.Death(delay);
                     delay += 0.05f;
                     EventManager.Instance.onNewPet.Invoke(pet.destroyDuration + delay);
                 }
-
-                EventManager.Instance.onAddScore.Invoke(score);
             }
         }
 
         selectedPets.Clear();
+    }
+
+    public void SendScore(List<Pet> pets)
+    {
+        int score = 0;
+        foreach (var pet in pets)
+        {
+            score += pet.scoreValue + (pet.scoreValue * pet.petId);
+        }
+
+        EventManager.Instance.onAddScore.Invoke(score);
     }
 
     private void Update()
