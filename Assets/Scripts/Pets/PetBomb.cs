@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class PetBomb : BonusPet
 {
+    [Header("Pet Bomb")]
     [SerializeField] float effectRadius;
     [SerializeField] LayerMask petLayer;
 
@@ -26,12 +27,6 @@ public class PetBomb : BonusPet
                 thisPet.Death(0);
         }
 
-        foreach (var item in pets)
-        {
-            EventManager.Instance.onNewPet.Invoke(item.destroyDuration + 0.5f);
-        }
-
-        print(pets.Count);
         pets.Clear();
         selections.SendScore(pets);
         Death(0);

@@ -46,19 +46,37 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: eec2307725260a24dbe7c33e006ccb2c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  mySprites:
-  - {fileID: 2471778937346436563, guid: 7df47a0651e880a48b607db4286d688b, type: 3}
-  - {fileID: 8402637397677100368, guid: 7df47a0651e880a48b607db4286d688b, type: 3}
-  - {fileID: 4808839733615185846, guid: 7df47a0651e880a48b607db4286d688b, type: 3}
-  - {fileID: 6711962241031170923, guid: 7df47a0651e880a48b607db4286d688b, type: 3}
-  - {fileID: -3168627390617671125, guid: 7df47a0651e880a48b607db4286d688b, type: 3}
-  - {fileID: -7156528453916883287, guid: 7df47a0651e880a48b607db4286d688b, type: 3}
   scoreValue: 5
   petId: 0
-  lightMat: {fileID: 2100000, guid: 680407914931aa642985cd173facf7c8, type: 2}
   destroyDuration: 0.5
   explosionFx: {fileID: 3518988527923401563, guid: e0ecc2f325b4cde4880179968c5515c0,
     type: 3}
+  lightMat: {fileID: 2100000, guid: 680407914931aa642985cd173facf7c8, type: 2}
+  availableTypes:
+  - myType: 0
+    rate: 0.5
+    thisSprite: {fileID: 2471778937346436563, guid: 7df47a0651e880a48b607db4286d688b,
+      type: 3}
+  - myType: 1
+    rate: 0.5
+    thisSprite: {fileID: 8402637397677100368, guid: 7df47a0651e880a48b607db4286d688b,
+      type: 3}
+  - myType: 2
+    rate: 0.5
+    thisSprite: {fileID: 4808839733615185846, guid: 7df47a0651e880a48b607db4286d688b,
+      type: 3}
+  - myType: 3
+    rate: 0.5
+    thisSprite: {fileID: 6711962241031170923, guid: 7df47a0651e880a48b607db4286d688b,
+      type: 3}
+  - myType: 4
+    rate: 0.5
+    thisSprite: {fileID: -3168627390617671125, guid: 7df47a0651e880a48b607db4286d688b,
+      type: 3}
+  - myType: 5
+    rate: 0.5
+    thisSprite: {fileID: -7156528453916883287, guid: 7df47a0651e880a48b607db4286d688b,
+      type: 3}
 --- !u!58 &5679561570182726888
 CircleCollider2D:
   m_ObjectHideFlags: 0

@@ -128,6 +128,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7845f105bfa8b32488fc4beef2a2d98a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  scoreValue: 0
+  petId: 0
   destroyDuration: 0.5
   explosionFx: {fileID: 3518988527923401563, guid: e0ecc2f325b4cde4880179968c5515c0,
     type: 3}

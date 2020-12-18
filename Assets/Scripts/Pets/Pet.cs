@@ -5,7 +5,12 @@ using DG.Tweening;
 
 public enum PetType
 {
-
+    Bear,
+    Panda,
+    Chicken,
+    Dog,
+    Crocodile,
+    Cow,
 }
 
 public class Pet : MonoBehaviour
@@ -13,8 +18,10 @@ public class Pet : MonoBehaviour
     protected Selections selections => FindObjectOfType<Selections>();
 
     protected bool selected;
+
+    [Header("Pet")]
     public int scoreValue = 5;
-    public int petId;
+    public PetType petId;
     public float destroyDuration = 0.5f;
     [SerializeField] GameObject explosionFx;
 
@@ -37,6 +44,7 @@ public class Pet : MonoBehaviour
         if (selections.allPets.Contains(pet))
             selections.allPets.Remove(pet);
 
+        EventManager.Instance.onNewPet.Invoke(duration + pet.destroyDuration);
         Destroy(pet.gameObject, destroyDuration + duration);
     }
 }

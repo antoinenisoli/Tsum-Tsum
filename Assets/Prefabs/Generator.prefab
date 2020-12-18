@@ -43,10 +43,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 85c5d1c77317ab743a28625c4865446e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  timer: 4
   dimensions: {x: 5, y: 10}
   offsetRandomRange: {x: -1, y: 1}
-  petPrefab: {fileID: 5679561570182726895, guid: 3e3a5469de90de04894d10726754d984,
-    type: 3}
-  snakePrefab: {fileID: 6791611310308857759, guid: 6def2c0ec405c9a4aa5676c2be854d7d,
-    type: 3}
+  spawns:
+  - prefab: {fileID: 5679561570182726895, guid: 3e3a5469de90de04894d10726754d984,
+      type: 3}
+    rate: 0.9
+  - prefab: {fileID: 6791611310308857759, guid: 6def2c0ec405c9a4aa5676c2be854d7d,
+      type: 3}
+    rate: 0.03

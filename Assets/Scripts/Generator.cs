@@ -5,11 +5,19 @@ using UnityEngine;
 
 public class Generator : MonoBehaviour
 {
+    [Serializable]
+    class SpawnRate
+    {
+        public GameObject prefab;
+        [Range(0,1)]
+        public float rate = 0.5f;
+    }
+
     Selections selections => FindObjectOfType<Selections>();
 
     [SerializeField] Vector2 dimensions = new Vector2(5, 5);
     [SerializeField] Vector2 offsetRandomRange = new Vector2(-1, 1);
-    [SerializeField] GameObject petPrefab, snakePrefab;
+    [SerializeField] SpawnRate[] spawns;
     int index;
     System.Random rdm = new System.Random();
     GameObject newPet;
@@ -44,11 +52,22 @@ public class Generator : MonoBehaviour
 
     void NewPet(Vector3 spawnPos)
     {
-        int probability = rdm.Next(0, 100);
-        if (probability < 2)
-            newPet = Instantiate(snakePrefab, spawnPos, Quaternion.identity);
-        else
-            newPet = Instantiate(petPrefab, spawnPos, Quaternion.identity);
+        bool done = false;
+        while (!done)
+        {
+            foreach (var spawn in spawns)
+            {
+                float randomValue = UnityEngine.Random.value;
+                print(randomValue);
+
+                if (randomValue > (1 - spawn.rate))
+                {
+                    newPet = Instantiate(spawn.prefab, spawnPos, Quaternion.identity);
+                    done = true;
+                    break;
+                }
+            }
+        }
 
         newPet.name = "PET" + index++;
         selections.allPets.Add(newPet.GetComponent<Pet>());

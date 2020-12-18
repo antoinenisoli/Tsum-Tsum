@@ -104,6 +104,11 @@ public class MainGameManager : MonoBehaviour
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
 
+    public void Home()
+    {
+        SceneManager.LoadScene(0);
+    }
+
     void ManageTimer()
     {
         displayTimer.text = currentTimer.ToString();
