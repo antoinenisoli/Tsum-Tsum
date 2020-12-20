@@ -7,23 +7,24 @@ using UnityEngine.SceneManagement;
 
 public class MainGameManager : MonoBehaviour
 {
+    LevelData levelData => LevelManager.Instance.SceneInfo;
+
     [Header("Score")]
     public int globalScore;
-    [SerializeField] int minScore = 100;
     [SerializeField] Text displayScore;
     [SerializeField] Text displayMinimumScore;
     Vector3 baseScale;
 
     [SerializeField] GameObject floatingText;
     [SerializeField] Transform spawnText;
+    [SerializeField] Image banner;
 
     [Header("Timer")]
-    [SerializeField] int gameTimer = 40;
+    [SerializeField] Text displayTimer;
+    [SerializeField] Image imageTimer;
     int currentTimer;
     float realTimer;
     bool started;
-    [SerializeField] Text displayTimer;
-    [SerializeField] Image imageTimer;
 
     [Header("Endgame")]
     [SerializeField] Image fadingScreen;
@@ -31,17 +32,19 @@ public class MainGameManager : MonoBehaviour
 
     private void Start()
     {
+        Time.timeScale = 1;
         EventManager.Instance.onAddScore.AddListener(AddScore);
         EventManager.Instance.onNewGame.AddListener(Launch);
         EventManager.Instance.onEndGame.AddListener(Ending);
         baseScale = displayScore.transform.localScale;
+        currentTimer = levelData.gameTimer;
+        displayMinimumScore.text = "Minimum : " + levelData.minScore;
+        displayTimer.text = currentTimer.ToString();
     }
 
     void Launch()
     {
-        imageTimer.DOFillAmount(0, gameTimer);
-        displayMinimumScore.text = "Minimum : " + minScore;
-        currentTimer = gameTimer;
+        imageTimer.DOFillAmount(0, levelData.gameTimer);
         started = true;
     }
 
@@ -55,81 +58,84 @@ public class MainGameManager : MonoBehaviour
         newText.transform.position = spawnText.transform.position;
         newText.transform.localScale = Vector3.one * 0.01f;
 
-        float tweenDuration = 2;
-        newText.transform.DOScale(baseNewScale * 2f, tweenDuration);
+        float tweenDuration = 0.8f;
+        newText.transform.DOScale(baseNewScale * 2f, tweenDuration/2).SetUpdate(true);
+        newText.transform.DOScale(baseNewScale * 0.3f, tweenDuration / 2).SetUpdate(true).SetDelay(tweenDuration / 2);
         Text _text = newText.GetComponentInChildren<Text>();
         _text.text = "+" + amount;
-        _text.DOFade(0, tweenDuration + 1);
+        _text.DOFade(0, tweenDuration/2).SetUpdate(true).SetDelay(tweenDuration / 2);
         Destroy(newText, tweenDuration);
 
         globalScore += (int)amount;
         displayScore.transform.DOKill(true);
         displayScore.text = globalScore.ToString();
-        displayScore.transform.DOPunchScale(baseScale * 0.5f, 1f, 5, 0.4f);
+        displayScore.transform.DOPunchScale(baseScale * 0.5f, 1f, 5, 0.4f).SetUpdate(true);
 
-        if (globalScore > minScore)
-            displayScore.color = Color.green;
-        else
-            displayScore.color = Color.red;
+        if (displayScore.color.g != Color.green.g)
+        {
+            if (globalScore > levelData.minScore)
+                displayScore.DOColor(Color.green, 1f);
+            else
+                displayScore.color = Color.red;
+        }
     }
 
-    public void Ending(bool value)
+    public void Ending(bool win)
     {
-        endText.GetComponent<Text>().DOFade(1, 2f);
-        fadingScreen.GetComponent<Image>().DOFade(0.75f, 2f);
+        endText.GetComponent<Text>().DOFade(1, 2f).SetUpdate(true);
+        fadingScreen.GetComponent<Image>().DOFade(0.75f, 2f).SetUpdate(true);
+        int i = SceneManager.GetActiveScene().buildIndex;
 
-        if (value)
+        if (win)
         {
             endText.text = "You win !!";
             endText.color = Color.green;
-            StartCoroutine(Load(SceneManager.GetActiveScene().buildIndex + 1, 5f));
+            StartCoroutine(Load(i + 1, 5f));
         }
         else
         {
             endText.text = "Game Over !!";
             endText.color = Color.red;
-            StartCoroutine(Load(SceneManager.GetActiveScene().buildIndex, 5f));
+            StartCoroutine(Load(i, 5f));
         }
+
+        Time.timeScale = 0;
     }
 
     IEnumerator Load(int index, float duration)
     {
-        yield return new WaitForSeconds(duration);
+        yield return new WaitForSecondsRealtime(duration);
         if (index < SceneManager.sceneCountInBuildSettings)
             SceneManager.LoadScene(index);
     }
 
-    public void Restart()
+    public void RestartOrHome(bool restart)
     {
-        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+        SceneManager.LoadScene(restart ? SceneManager.GetActiveScene().buildIndex : 0);
     }
 
-    public void Home()
+    void AddTimer()
     {
-        SceneManager.LoadScene(0);
+        currentTimer--;
+        displayTimer.text = currentTimer.ToString();
+        Vector3 baseScale = displayTimer.transform.localScale;
+        float tweenDuration = 0.4f;
+        displayTimer.transform.DOScale(baseScale * 1.2f, tweenDuration);
+        displayTimer.transform.DOScale(baseScale, tweenDuration / 2).SetDelay(tweenDuration / 2);
+        realTimer = 0;
     }
 
     void ManageTimer()
     {
-        displayTimer.text = currentTimer.ToString();
         if (!started)
             return;
 
         realTimer += Time.deltaTime;
         if (realTimer > 1 && currentTimer > 0)
-        {
-            currentTimer--;
-            Vector3 baseScale = displayTimer.transform.localScale;
-            float tweenDuration = 0.4f;
-            displayTimer.transform.DOScale(baseScale * 1.2f, tweenDuration);
-            displayTimer.transform.DOScale(baseScale, tweenDuration / 2).SetDelay(tweenDuration / 2);
-            realTimer = 0;
-        }
+            AddTimer();
 
         if (currentTimer <= 0)
-        {
-            EventManager.Instance.onEndGame.Invoke(globalScore > minScore);
-        }
+            EventManager.Instance.onEndGame.Invoke(globalScore > levelData.minScore);
     }
 
     private void Update()

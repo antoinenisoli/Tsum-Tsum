@@ -23,10 +23,8 @@ public class Selections : MonoBehaviour
             RaycastHit2D hit = Physics2D.Raycast(mainCam.ScreenToWorldPoint(Input.mousePosition), Vector2.zero, Mathf.Infinity, petLayer);
             if (hit)
             {
-                if (hit.transform.GetComponent<RegularPet>())
-                {
+                if (hit.transform.GetComponent<RegularPet>() && myPetReference == null)
                     hit.transform.GetComponent<RegularPet>().Select();
-                }
 
                 if (selectedPets.Count > 1)
                 {
@@ -42,9 +40,7 @@ public class Selections : MonoBehaviour
             if (hit)
             {
                 if (hit.transform.GetComponent<BonusPet>())
-                {
-                    hit.transform.GetComponent<BonusPet>().Effect();
-                }
+                    hit.transform.GetComponent<BonusPet>().Death(0);
             }
         }
 

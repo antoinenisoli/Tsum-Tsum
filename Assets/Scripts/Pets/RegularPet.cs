@@ -26,7 +26,11 @@ public class RegularPet : Pet
     private void Awake()
     {
         baseMat = spr.material;
-        bool done = false;
+        int random = UnityEngine.Random.Range(0, availableTypes.Length);
+        petId = availableTypes[random].myType;
+        spr.sprite = availableTypes[random].thisSprite;
+
+        /*bool done = false;
         while (!done)
         {
             foreach (var type in availableTypes)
@@ -40,15 +44,15 @@ public class RegularPet : Pet
                     break;
                 }
             }
-        }
+        }*/
     }
 
     private void OnMouseEnter()
     {
-        if (!Input.GetMouseButton(0))
+        if (!Input.GetMouseButton(0) || selections.myPetReference == null)
             return;
 
-        if (petId == selections.myPetReference.petId)
+        if (petId.Equals(selections.myPetReference.petId))
         {
             if (selected == false)
             {

@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class PetBomb : BonusPet
@@ -14,21 +15,20 @@ public class PetBomb : BonusPet
         Gizmos.DrawWireSphere(transform.position, effectRadius);
     }
 
-    public override void Effect()
+    public override void Death(float bonusDelay)
     {
         Collider2D[] hits = Physics2D.OverlapCircleAll(transform.position, effectRadius, petLayer);
         List<Pet> pets = new List<Pet>();
-        foreach (var hit in hits)
-        {
-            Pet thisPet = hit.GetComponent<Pet>();
-            pets.Add(thisPet);
+        foreach (var hit in hits) { pets.Add(hit.GetComponent<Pet>()); }
+        selections.SendScore(pets);
 
-            if (thisPet != this)
-                thisPet.Death(0);
+        foreach (var pet in pets)
+        {
+            if (pet != this)
+                pet.Death(0);
         }
 
         pets.Clear();
-        selections.SendScore(pets);
-        Death(0);
+        base.Death(bonusDelay);
     }
 }
